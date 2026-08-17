@@ -8,20 +8,38 @@
 import SwiftUI
 import CoreImage
 import CoreImage.CIFilterBuiltins
+import PhotosUI
 
 struct ContentView: View {
+    @State private var pickerItem: PhotosPickerItem?
     @State private var image: Image?
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             image?
                 .resizable()
                 .scaledToFit()
+                .frame(maxHeight: 300)
+            
+            HStack(spacing: 16) {
+                Button("Load Example") {
+                    loadFilteredExample()
+                }
+                .buttonStyle(.borderedProminent)
+                
+                PhotosPicker("Select from Photos", selection: $pickerItem, matching: .images)
+                    .buttonStyle(.bordered)
+            }
         }
-        .onAppear(perform: loadImage)
+        .padding()
+        .onChange(of: pickerItem) {
+            Task {
+                image = try? await pickerItem?.loadTransferable(type: Image.self)
+            }
+        }
     }
     
-    func loadImage() {
+    private func loadFilteredExample() {
         let inputImage = UIImage(resource: .example)
         let beginImage = CIImage(image: inputImage)
         
