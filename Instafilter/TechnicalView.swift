@@ -10,7 +10,7 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import PhotosUI
 
-struct ContentView: View {
+struct TechnicalView: View {
     @State private var pickerItem: PhotosPickerItem?
     @State private var image: Image?
     
@@ -60,5 +60,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    TechnicalView()
 }
