@@ -44,11 +44,13 @@ struct InstafilterView: View {
                     Text("Intensity")
                     Slider(value: $filterIntensity)
                         .onChange(of: filterIntensity, applyProcessing)
+                        .disabled(processedImage == nil)
                 }
                 .padding(.vertical)
                 
                 HStack {
                     Button("Change Filter", action: changeFilter)
+                        .disabled(processedImage == nil)
                     
                     Spacer()
                     
