@@ -75,6 +75,9 @@ struct InstafilterView: View {
                 Button("Sepia Tone") { setFilter(CIFilter.sepiaTone()) }
                 Button("Unsharp Mask") { setFilter(CIFilter.unsharpMask()) }
                 Button("Vignette") { setFilter(CIFilter.vignette()) }
+                Button("Effect Fade") { setFilter(CIFilter.photoEffectFade()) }
+                Button("Gloom") { setFilter(CIFilter.gloom()) }
+                Button("Comic Effect") { setFilter(CIFilter.comicEffect()) }
                 Button("Cancel", role: .cancel) { }
             }
         }
