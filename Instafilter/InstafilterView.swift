@@ -22,30 +22,29 @@ struct InstafilterView: View {
             VStack {
                 Spacer()
                 
-                PhotosPicker(selection: $viewModel.selectedItem) {
-                    if let processedImage = viewModel.processedImage {
-                        processedImage
-                            .resizable()
-                            .scaledToFit()
-                    } else {
-                        ContentUnavailableView("No Picture", systemImage: "photo.badge.plus", description: Text("Import a photo to get started"))
-                    }
-                }
-                .onChange(of: viewModel.selectedItem, viewModel.loadImage)
+                ImagePickerView(
+                    selectedItem: $viewModel.selectedItem,
+                    processedImage: viewModel.processedImage,
+                    onImageSelected: viewModel.loadImage
+                )
                 
                 Spacer()
                 
-                HStack {
-                    Text("Intensity")
-                    Slider(value: $viewModel.filterIntensity)
-                        .onChange(of: viewModel.filterIntensity, viewModel.applyProcessing)
-                        .disabled(viewModel.processedImage == nil)
-                    
-                    Text("Radius")
-                    Slider(value: $viewModel.filterRadius, in: 0...100)
-                        .onChange(of: viewModel.filterRadius, viewModel.applyProcessing)
-                        .disabled(viewModel.processedImage == nil)
-                }
+                FilterSliderView(
+                    title: "Intensity",
+                    value: $viewModel.filterIntensity,
+                    range: 0...1,
+                    onChange: viewModel.applyProcessing,
+                    isEnabled: viewModel.processedImage != nil
+                )
+                
+                FilterSliderView(
+                    title: "Radius",
+                    value: $viewModel.filterRadius,
+                    range: 0...100,
+                    onChange: viewModel.applyProcessing,
+                    isEnabled: viewModel.processedImage != nil
+                )
                 .padding(.vertical)
                 
                 HStack {
@@ -55,7 +54,7 @@ struct InstafilterView: View {
                     Spacer()
                     
                     if let processedImage = viewModel.processedImage {
-                        ShareLink(item: processedImage, preview: SharePreview("Instafilter image", image: processedImage))
+                        ShareButtonView(image: processedImage)
                     }
                 }
             }
