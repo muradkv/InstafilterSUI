@@ -17,33 +17,38 @@ class InstafilterViewModel {
     var filterRadius = 0.0
     var selectedItem: PhotosPickerItem?
     var currentFilter: CIFilter = CIFilter.sepiaTone()
+        
+    private let imageService: ImageProcessingServiceProtocol
+    private var inputImage: UIImage?
     
-    let context = CIContext()
+    init(imageService: ImageProcessingServiceProtocol = ImageProcessingService()) {
+        self.imageService = imageService
+    }
     
     func loadImage() {
         Task {
             guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
-            guard let inputImage = UIImage(data: imageData) else { return }
+            guard let uiImage = UIImage(data: imageData) else { return }
             
-            let beginImage = CIImage(image: inputImage)
-            currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
+            inputImage = uiImage
             applyProcessing()
         }
     }
     
     func applyProcessing() {
-        let inputKeys = currentFilter.inputKeys
+        guard let inputImage else { return }
         
-        if inputKeys.contains(kCIInputIntensityKey) { currentFilter.setValue(filterIntensity, forKey: kCIInputIntensityKey) }
-        if inputKeys.contains(kCIInputRadiusKey) {
-            currentFilter.setValue(filterRadius, forKey: kCIInputRadiusKey) }
-        if inputKeys.contains(kCIInputScaleKey) { currentFilter.setValue(filterIntensity * 10, forKey: kCIInputScaleKey) }
+        let processedUIImage = imageService.applyFilter(
+            to: inputImage,
+            filter: currentFilter,
+            intensity: filterIntensity,
+            radius: filterRadius,
+            scale: filterIntensity * 10
+        )
         
-        guard let outputImage = currentFilter.outputImage else { return }
-        guard let cgImage = context.createCGImage(outputImage, from: outputImage.extent) else { return }
-        
-        let uiImage = UIImage(cgImage: cgImage)
-        processedImage = Image(uiImage: uiImage)
+        if let processedUIImage {
+            processedImage = Image(uiImage: processedUIImage)
+        }
     }
     
     func setFilter(_ filter: CIFilter) {
