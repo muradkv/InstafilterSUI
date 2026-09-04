@@ -61,16 +61,12 @@ struct InstafilterView: View {
             .padding([.horizontal, .bottom])
             .navigationTitle("Instafilter")
             .confirmationDialog("Select a filter", isPresented: $showingFilters) {
-                Button("Crystallize") { setFilter(CIFilter.crystallize()) }
-                Button("Edges") { setFilter(CIFilter.edges()) }
-                Button("Gaussian Blur") { setFilter(CIFilter.gaussianBlur()) }
-                Button("Pixellate") { setFilter(CIFilter.pixellate()) }
-                Button("Sepia Tone") { setFilter(CIFilter.sepiaTone()) }
-                Button("Unsharp Mask") { setFilter(CIFilter.unsharpMask()) }
-                Button("Vignette") { setFilter(CIFilter.vignette()) }
-                Button("Effect Fade") { setFilter(CIFilter.photoEffectFade()) }
-                Button("Gloom") { setFilter(CIFilter.gloom()) }
-                Button("Comic Effect") { setFilter(CIFilter.comicEffect()) }
+                ForEach(FilterModel.allFilters) { filterModel in
+                    Button(filterModel.name) {
+                        setFilter(filterModel.filter)
+                    }
+                }
+                
                 Button("Cancel", role: .cancel) { }
             }
         }
