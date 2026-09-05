@@ -13,8 +13,8 @@ import StoreKit
 @Observable
 class InstafilterViewModel {
     var processedImage: Image?
-    var filterIntensity = 0.5
-    var filterRadius = 0.0
+    var filterIntensity = FilterConstants.defaultIntensity
+    var filterRadius = FilterConstants.defaultRadius
     var selectedItem: PhotosPickerItem?
     var currentFilter: CIFilter = CIFilter.sepiaTone()
         
@@ -43,7 +43,7 @@ class InstafilterViewModel {
             filter: currentFilter,
             intensity: filterIntensity,
             radius: filterRadius,
-            scale: filterIntensity * 10
+            scale: filterIntensity * FilterConstants.scaleMultiplier
         )
         
         if let processedUIImage {

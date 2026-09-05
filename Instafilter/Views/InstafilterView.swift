@@ -14,7 +14,7 @@ import StoreKit
 struct InstafilterView: View {
     @State private var viewModel = InstafilterViewModel()
     @Environment(\.requestReview) var requestReview
-    @AppStorage("filterCount") var filterCount = 0
+    @AppStorage(UserDefaultsKeys.filterCount) var filterCount = 0
     @State private var showingFilters = false
     
     var body: some View {
@@ -33,7 +33,7 @@ struct InstafilterView: View {
                 FilterSliderView(
                     title: "Intensity",
                     value: $viewModel.filterIntensity,
-                    range: 0...1,
+                    range: FilterConstants.intensityRange,
                     onChange: viewModel.applyProcessing,
                     isEnabled: viewModel.processedImage != nil
                 )
@@ -41,7 +41,7 @@ struct InstafilterView: View {
                 FilterSliderView(
                     title: "Radius",
                     value: $viewModel.filterRadius,
-                    range: 0...100,
+                    range: FilterConstants.radiusRange,
                     onChange: viewModel.applyProcessing,
                     isEnabled: viewModel.processedImage != nil
                 )
@@ -77,7 +77,7 @@ struct InstafilterView: View {
         
         viewModel.setFilter(filter)
         
-        if filterCount == 20 {
+        if filterCount == FilterConstants.reviewThreshold {
             requestReview()
         }
     }
