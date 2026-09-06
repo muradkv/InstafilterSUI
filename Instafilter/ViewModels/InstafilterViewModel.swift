@@ -17,7 +17,7 @@ class InstafilterViewModel {
     var filterRadius = FilterConstants.defaultRadius
     var selectedItem: PhotosPickerItem?
     var currentFilter: CIFilter = CIFilter.sepiaTone()
-        
+    
     private let imageService: ImageProcessingServiceProtocol
     private var inputImage: UIImage?
     
@@ -27,14 +27,22 @@ class InstafilterViewModel {
     
     func loadImage() {
         Task {
-            guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
-            guard let uiImage = UIImage(data: imageData) else { return }
+            guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else {
+                print("⚠️ Failed to load image data")
+                return
+            }
+            
+            guard let uiImage = UIImage(data: imageData) else {
+                print("⚠️ Failed to create UIImage from data")
+                return
+            }
             
             inputImage = uiImage
-            applyProcessing()
+            await applyProcessing()
         }
     }
     
+    @MainActor
     func applyProcessing() {
         guard let inputImage else { return }
         

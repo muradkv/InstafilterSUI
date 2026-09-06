@@ -13,8 +13,8 @@ import StoreKit
 
 struct InstafilterView: View {
     @State private var viewModel = InstafilterViewModel()
-    @Environment(\.requestReview) var requestReview
-    @AppStorage(UserDefaultsKeys.filterCount) var filterCount = 0
+    @Environment(\.requestReview) private var requestReview
+    @AppStorage(UserDefaultsKeys.filterCount) private var filterCount = 0
     @State private var showingFilters = false
     
     var body: some View {
