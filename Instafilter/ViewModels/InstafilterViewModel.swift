@@ -21,6 +21,18 @@ class InstafilterViewModel {
     private let imageService: ImageProcessingServiceProtocol
     private var inputImage: UIImage?
     
+    var currentFilterModel: FilterModel? {
+        FilterModel.allFilters.first { $0.filter.name == currentFilter.name }
+    }
+    
+    var supportsIntensity: Bool {
+        currentFilter.supportsIntensity
+    }
+
+    var supportsRadius: Bool {
+        currentFilter.supportsRadius
+    }
+    
     init(imageService: ImageProcessingServiceProtocol = ImageProcessingService()) {
         self.imageService = imageService
     }

@@ -30,22 +30,27 @@ struct InstafilterView: View {
                 
                 Spacer()
                 
-                FilterSliderView(
-                    title: "Intensity",
-                    value: $viewModel.filterIntensity,
-                    range: FilterConstants.intensityRange,
-                    onChange: viewModel.applyProcessing,
-                    isEnabled: viewModel.processedImage != nil
-                )
-                
-                FilterSliderView(
-                    title: "Radius",
-                    value: $viewModel.filterRadius,
-                    range: FilterConstants.radiusRange,
-                    onChange: viewModel.applyProcessing,
-                    isEnabled: viewModel.processedImage != nil
-                )
-                .padding(.vertical)
+                if let _ =  viewModel.currentFilterModel {
+                    if viewModel.supportsIntensity {
+                        FilterSliderView(
+                            title: "Intensity",
+                            value: $viewModel.filterIntensity,
+                            range: FilterConstants.intensityRange,
+                            onChange: viewModel.applyProcessing,
+                            isEnabled: viewModel.processedImage != nil
+                        )
+                    }
+                    
+                    if viewModel.supportsRadius {
+                        FilterSliderView(
+                            title: "Radius",
+                            value: $viewModel.filterRadius,
+                            range: FilterConstants.radiusRange,
+                            onChange: viewModel.applyProcessing,
+                            isEnabled: viewModel.processedImage != nil
+                        )
+                    }
+                }
                 
                 HStack {
                     Button("Change Filter") { showingFilters = true }
