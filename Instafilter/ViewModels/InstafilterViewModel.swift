@@ -18,7 +18,11 @@ class InstafilterViewModel {
     var selectedItem: PhotosPickerItem?
     var currentFilter: CIFilter = CIFilter.sepiaTone()
     
+    var alertMessage: String?
+    var alertIsPresented: Bool = false
+    
     private let imageService: ImageProcessingServiceProtocol
+    private let photoService: PhotoLibraryServiceProtocol
     private var inputImage: UIImage?
     
     var currentFilterModel: FilterModel? {
@@ -28,13 +32,17 @@ class InstafilterViewModel {
     var supportsIntensity: Bool {
         currentFilter.supportsIntensity
     }
-
+    
     var supportsRadius: Bool {
         currentFilter.supportsRadius
     }
     
-    init(imageService: ImageProcessingServiceProtocol = ImageProcessingService()) {
+    init(
+        imageService: ImageProcessingServiceProtocol = ImageProcessingService(),
+        photoService: PhotoLibraryServiceProtocol = PhotoLibraryService()
+    ) {
         self.imageService = imageService
+        self.photoService = photoService
     }
     
     func loadImage() {
@@ -51,6 +59,36 @@ class InstafilterViewModel {
             
             inputImage = uiImage
             await applyProcessing()
+        }
+    }
+    
+    @MainActor
+    func saveImage() async {
+        guard let inputImage else {
+            alertMessage = "No image to save"
+            alertIsPresented = true
+            return
+        }
+        
+        guard let uiImage = imageService.applyFilter(
+            to: inputImage,
+            filter: currentFilter,
+            intensity: filterIntensity,
+            radius: filterRadius,
+            scale: filterIntensity * 10
+        ) else {
+            alertMessage = "Failed to process image"
+            alertIsPresented = true
+            return
+        }
+        
+        do {
+            try await photoService.saveImage(uiImage)
+            alertMessage = "Image saved successfully!"
+            alertIsPresented = true
+        } catch {
+            alertMessage = "Failed to save image: \(error.localizedDescription)"
+            alertIsPresented = true
         }
     }
     

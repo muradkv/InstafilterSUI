@@ -59,7 +59,14 @@ struct InstafilterView: View {
                     Spacer()
                     
                     if let processedImage = viewModel.processedImage {
-                        ShareButtonView(image: processedImage)
+                        HStack {
+                            ShareButtonView(image: processedImage)
+                            
+                            Button("Save") {
+                                Task { await viewModel.saveImage() }
+                            }
+                            .buttonStyle(.bordered)
+                        }
                     }
                 }
             }
@@ -74,6 +81,16 @@ struct InstafilterView: View {
                 
                 Button("Cancel", role: .cancel) { }
             }
+            .alert(
+                "Notice",
+                isPresented: $viewModel.alertIsPresented,
+                actions: {
+                    Button("OK") { }
+                },
+                message: {
+                    Text(viewModel.alertMessage ?? "")
+                }
+            )
         }
     }
     
